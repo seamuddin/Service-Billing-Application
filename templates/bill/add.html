@@ -1,0 +1,258 @@
+{% extends 'dashboard/index.html' %}
+{% load static %}
+{% block content %}
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2 justify-content-end">
+
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active">Generate Bill</li>
+                        </ol>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+
+        <!-- Main content -->
+
+        <section class="content">
+            <div class="container-fluid p-5">
+                <!-- Small boxes (Stat box) -->
+
+
+                <div class="row justify-content-center">
+
+                    <section class="col-12 col-md-6 col-lg-6 connectedSortable">
+                        <!-- /.card -->
+                        <!-- Horizontal Form -->
+                        <div class="card card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Generate Bill</h3>
+                            </div>
+
+                            <strong class="text-center mt-2 text-danger">{{ error }}</strong>
+                            <!-- /.card-header -->
+                            <!-- form start -->
+                            <form class="form-horizontal" id="form_data">
+                                {% csrf_token %}
+                                <div class="card-body">
+                                    <div class="form-group row justify-content-center">
+                                        <label for="inputEmail3" class="col-sm-3 col-form-label">Tanent :</label>
+                                        <div class="col-sm-7">
+                                            <select class="custom-select" name="tanent" id="bid_tanent">
+                                                <option value=""></option>
+                                                {% for tanent in tanents %}
+                                                    <option value="{{ tanent.id }}">{{ tanent.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row justify-content-center">
+                                        <label for="inputEmail3" class="col-sm-3 col-form-label">Month :</label>
+                                        <div class="col-sm-7">
+                                            <select class="custom-select" name="month">
+                                                {% for month in month %}
+                                                    <option value="{{ month.number }}">{{ month.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group row justify-content-center">
+                                        <label for="inputEmail3" class="col-sm-3 col-form-label">Year :</label>
+                                        <div class="col-sm-7">
+                                            <select class="custom-select" name="year">
+                                                {% for year in years %}
+                                                    <option value="{{ year }}">{{ year }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group row justify-content-center">
+                                        <label for="inputPassword3" class="col-sm-3 col-form-label">Amount
+                                            :</label>
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" id="amount"
+                                                   placeholder="0000 TK" name="amount" readonly>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                                <!-- /.card-body -->
+                                <div class="card-footer justify-content-center row">
+                                    <button type="submit" class="btn btn-info float-right" id="generate">Generate
+                                    </button>
+
+                                </div>
+                                <!-- /.card-footer -->
+                            </form>
+                        </div>
+                        <!-- /.card -->
+                    </section>
+                    <section class="col-12 col-md-6 col-lg-6" id="bil_info">
+
+                        <div class="card card-info" style="min-height: 372px">
+                            <div id="loading" class="loading">
+                                <img src="{% static 'img/spinning.gif' %} " alt="">
+                            </div>
+                            <div class="card-header">
+                                <h3 class="card-title">Bill Info</h3>
+
+
+                            </div>
+                            <div class="card-body bill-info" id="bill_info">
+                                <div>
+                                    <p><span>Tanent Name : </span></p>
+                                    <p><span>Flat Name : </span></p>
+                                    <p><span>Flat Size : </span></p>
+                                    <p><span>Month : </span></p>
+                                    <p><span>Year : </span></p>
+                                    <p><span>Bill Status : </span></p>
+                                    <p><span>Service Bill : </span></p>
+                                </div>
+
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <!-- /.row (main row) -->
+            </div><!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+    </div>
+
+    <div id="pdf_view" style="display: none">
+        <div id="pdf_data">
+
+        </div>
+
+
+    </div>
+
+    <iframe
+            id="frame"
+            style="width: 100%; border: 0; height: 0"
+            src="/"
+    ></iframe>
+{% endblock %}
+
+{% block form_js %}
+
+
+    <script>
+        $("#pdf_view").hide()
+        $("#loading").hide()
+        $("#generate").click(function (event) {
+            event.preventDefault()
+            $.ajax({
+                url: "{% url 'generate_bill' %}",
+                datatype: "html",
+                data: $("#form_data").serializeArray(),
+                type: "post",
+                success: function (data) {
+                    $('#loading').show()
+                    $('#bill_info').html(data);
+                    setTimeout(function () {
+                        $('#loading').hide();
+                    }, 500);
+
+
+                }
+            })
+        })
+
+        $("#bid_tanent").click(function (event) {
+            if ($('#bid_tanent').val()) {
+                $.ajax({
+                    url: "/tanent/get_flat_charge/" + $('#bid_tanent').val(),
+                    datatype: "data",
+                    type: "get",
+                    success: function (data) {
+                        if (data.charge) {
+                            $("#amount").val(data.charge)
+                        }
+                    }
+                })
+            }
+
+        })
+
+
+        function generate_pdf(id) {
+            $.ajax({
+                url: "/tanent/pdf_data/" + id,
+                datatype: "html",
+                type: "get",
+                success: function (data) {
+                    if (data) {
+                        $("#pdf_data").html(data)
+                        $("#pdf_view").show()
+                        window.addEventListener('click', function (e) {
+
+                            if (e.target == document.getElementById("receipt")) {
+                                $("#pdf_view").hide()
+                            }
+
+                        })
+
+                        document.querySelector('#print_it').addEventListener('click', function () {
+
+
+                            event.preventDefault()
+                            event.stopPropagation()
+
+
+                            html2canvas(document.querySelector('#invoice_main')).then((canvas) => {
+                                let base64image = canvas.toDataURL('image/png');
+                                // console.log(base64image);
+                                //  let pdf = new jsPDF('p', 'px', [1200, 900]);
+                                let pdf = jsPDF({
+                                    orientation: 'p', // landscape
+                                    unit: 'px', // points, pixels won't work properly
+                                    format: [612, 792] // set needed dimensions for any element
+                                });
+                                pdf.addImage(base64image, 'PNG', 15, 15, 588, 765);
+                                pdf.save('invoice.pdf');
+                            });
+
+
+                        });
+
+
+                    }
+                }
+            })
+        }
+    </script>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+
+    <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+            integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+    ></script>
+
+
+    <script>
+
+
+    </script>
+
+
+
+
+{% endblock %}

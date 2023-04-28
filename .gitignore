@@ -1,0 +1,5 @@
+.idea
+.venv
+venv
+*vcs.xml
+db.sqlite3
