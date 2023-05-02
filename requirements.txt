@@ -4,3 +4,4 @@ django-widget-tweaks==1.4.8
 sqlparse==0.4.3
 tzdata==2022.7
 xhtml2pdf
+django-widget-tweaks
