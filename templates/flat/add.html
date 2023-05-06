@@ -1,0 +1,80 @@
+{% extends 'dashboard/index.html' %}
+{% block content %}
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">Flat</h1>
+                    </div><!-- /.col -->
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active">Flat</li>
+                            <li class="breadcrumb-item active">Add</li>
+                        </ol>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <!-- Small boxes (Stat box) -->
+                <div class="row justify-content-center">
+                    <section class="col-lg-5 connectedSortable">
+                        <!-- /.card -->
+                        <!-- Horizontal Form -->
+                        <div class="card card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Add Flat</h3>
+                            </div>
+                            <strong class="text-center mt-2 text-danger">{{ error }}</strong>
+                            <!-- /.card-header -->
+                            <!-- form start -->
+                            <form class="form-horizontal" method="post">
+                                {% csrf_token %}
+                                <div class="card-body">
+                                    <div class="form-group row">
+                                        <label for="inputEmail3" class="col-sm-3 col-form-label">Flat Number :</label>
+                                        <div class="col-sm-12">
+                                            <input type="text" class="form-control" id="inputEmail3"
+                                                   placeholder="50-10D" name="flat_no">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="inputPassword3" class="col-sm-3 col-form-label">Flat Size (sq)
+                                            :</label>
+                                        <div class="col-sm-12">
+                                            <input type="number" class="form-control" id="inputPassword3"
+                                                   placeholder="5 sq" name="size" value="800">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Owner</label>
+                                        <select class="custom-select" name="owner">
+                                            {% for member in owner %}
+                                            <option value="{{ member.id }}">{{ member.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- /.card-body -->
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-info float-right">Save</button>
+                                </div>
+                                <!-- /.card-footer -->
+                            </form>
+                        </div>
+                        <!-- /.card -->
+                    </section>
+                </div>
+                <!-- /.row (main row) -->
+            </div><!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+    </div>
+{% endblock %}
