@@ -180,43 +180,6 @@ def pdf_data(request, bill_id,**kwargs):
 
     return render(request, 'bill/invoice.html', context=bill_info)
 
-@login_required(login_url='login')
-def change_tanent_flat(request, **kwargs):
-    if request.POST:
-        try:
-
-            # tanent = Tanent.objects.get(id=request.POST.get('tanent'))
-            # tanent.flat = Flat.objects.get(id=request.POST.get('flat'))
-            # tanent.date = request.POST.get('date')
-
-            flat_change_history = FlatChangeHistory()
-            flat_change_history.tanent = Tanent.objects.get(id=request.POST.get('tanent'))
-            flat_change_history.flat = Flat.objects.get(id=request.POST.get('flat'))
-            flat_change_history.date = request.POST.get('date')
-            already_exist_verify(flat_change_history.tanent, flat_change_history.flat)
-            flat_change_history.full_clean()
-            flat_change_history.save()
-            # tanent.full_clean()
-            # tanent.save()
-            return redirect('/tanent')
-        except ValidationError as e:
-            context = {}
-            request.POST._mutable = True
-            context['tanent_data'] = request.POST
-            context['flat'] = Flat.objects.all()
-            context['tanent'] =  Tanent.objects.all()
-            context['error'] = str(e.message_dict)
-            return render(request, 'tanent/change_flat.html', context)
-
-
-
-    context = {
-        'flat': Flat.objects.all(),
-        'tanent': Tanent.objects.all()
-    }
-    return render(request, 'tanent/change_flat.html', context=context)
-
-
 def already_exist_verify(tanent=None,flat=None):
     tanent = Tanent.objects.get(id=tanent.id)
     if tanent.flat == flat:
