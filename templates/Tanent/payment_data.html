@@ -1,0 +1,31 @@
+
+
+    <thead>
+    <tr>
+        <th style="width: 10px">#</th>
+        <th>Month</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Action</th>
+        <th>Print</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for bill in bill %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ bill.month }}</td>
+            <td>{{ bill.amount }}</td>
+            <td>
+                <button type="button" class="btn btn-block btn-success" style="width: 70px">Paid</button>
+{#                <button type="button" class="btn btn-block btn-warning">Unpaid</button>#}
+            </td>
+            <td>
+                <button type="button" class="btn btn-block btn-success" style="width: 80px">Pay Bill</button>
+            </td>
+
+            <td class="text-center"><a href=""><i class="fas fa-file-invoice" style="font-size: 25px"></i></a></td>
+
+        </tr>
+    {% endfor %}
+    </tbody>
