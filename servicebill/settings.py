@@ -40,7 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'widget_tweaks',
-
+    'mainapp',
+    'member',
+    'flat',
+    'tanent',
+    'core'
 
 ]
 
